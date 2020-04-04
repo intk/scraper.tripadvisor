@@ -9,7 +9,7 @@ from selenium.common.exceptions import NoSuchElementException
 options = Options()  
 options.add_argument("user-agent=Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/61.0.3163.100 Safari/537.36")
 options.add_argument("--disable-gpu")
-options.headless = True
+options.headless = False
 
 # Enable usage of cache and cookies
 options.add_argument('user-data-dir=data')
@@ -90,17 +90,20 @@ def getReviews(driver, iterations):
 		except:
 
 			if iterations == 0:
-				return
+				return False
 
 			print(f"EXCEPT, Iterations: {iterations}")
 			iterations = iterations -1
-			getReviews(driver, iterations)
+			return getReviews(driver, iterations)
+
+	return True
 
 
 # change the value inside the range to save more or less reviews
 for i in range(0,10):
 
-	getReviews(driver, 10)
+	if getReviews(driver, 10) == False:
+		print (f"Couldn't parse page #{i}")
 
 	driver.find_element_by_xpath(".//a[contains(@class, 'ui_button nav next primary ')]").click()
 	print(f"PAGE #{i}")
