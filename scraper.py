@@ -97,14 +97,19 @@ def getReviews(driver, iterations):
 				"author": container[j].find_element_by_xpath(".//a[contains(@class, 'social-member-event-MemberEventOnObjectBlock__member--')]").text.replace("\n", ""),
 				"title": container[j].find_element_by_xpath(".//a[contains(@class, 'location-review-review-list-parts-ReviewTitle__reviewTitleText--')]").text.replace("\n", ""),
 				"link": container[j].find_element_by_xpath(".//a[contains(@class, 'location-review-review-list-parts-ReviewTitle__reviewTitleText--')]").get_attribute('href'),
+				"avatar":  "",
 				"rating": int(int(container[j].find_element_by_xpath(".//span[contains(@class, 'ui_bubble_rating bubble_')]").get_attribute('class').split('_')[3])/10),
 				"comment": ""
 			}
 
 			# Expand review
 			container[j].find_element_by_xpath(".//q[contains(@class, 'location-review-review-list-parts-ExpandableReview__reviewText--')]").click()
+			
 			# Add review comment
 			review["comment"] = container[j].find_element_by_xpath(".//q[contains(@class, 'location-review-review-list-parts-ExpandableReview__reviewText--gOmRC')]").text.replace("\n", "")
+
+			# Add review profile picture
+			review["avatar"] = container[j].find_element_by_xpath(".//a[contains(@class, 'styleguide-avatar-Avatar__avatar--2NStU')]/img").get_attribute('src')
 			
 			# Find date in string
 			review["date"] = formatDate(re.findall("[\\w.]+ \d{4}", review["date"])[0])
@@ -138,7 +143,7 @@ for i in range(0,pageAmount):
 
 	reviews = getReviews(driver, 10)
 	pushToJSON(reviews, "output.json")
-
+	
 	if check_exists_by_xpath(".//a[contains(@class, 'ui_button nav next primary ')]"):
 		driver.find_element_by_xpath(".//a[contains(@class, 'ui_button nav next primary ')]").click()
 
@@ -147,7 +152,3 @@ for i in range(0,pageAmount):
 #Exit program
 time.sleep(1)
 driver.close()
-
-
-
-
